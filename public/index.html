@@ -3,14 +3,117 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Document</title>
+    <meta name="color-scheme" content="light" />
+    <title>Bill Splitter API Documentation</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333 !important;
+        background-color: #ffffff !important;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1,
+      h2 {
+        color: #4caf50;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      .endpoint {
+        background-color: #e9e9e9;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: monospace;
+      }
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 0.9em;
+      }
+    </style>
   </head>
   <body>
-    <h1>Bill Processing api.</h1>
-    <h2>This app use Gemini ai module to process restaurants receipts</h2>
-    <h3>If you wonna try it:</h3>
-    <p>send a post request to:</p>
-    <code></code>
+    <h1>Bill Splitter API Documentation</h1>
+
+    <h2>Overview</h2>
+    <p>
+      This API provides image analysis for bill splitting purposes. It uses
+      Google's Generative AI to process images of restaurant receipts and return
+      structured data.
+    </p>
+
+    <h2>Endpoint</h2>
+    <p class="endpoint">POST /api/analyze-image</p>
+
+    <h2>Request Format</h2>
+    <p>
+      Send a POST request with a JSON body containing a base64-encoded image:
+    </p>
+    <pre>
+{
+  "image": "base64_encoded_image_string"
+}
+    </pre>
+
+    <h2>Response Format</h2>
+    <p>The API returns a JSON object with the following structure:</p>
+    <pre>
+{
+  "items": [
+    {
+      "id": "unique_id_string",
+      "name": "item name",
+      "quantity": number,
+      "price": number,
+      "assignTo": []
+    }
+  ],
+  "currency": "currency_symbol",
+  "taxes": number,
+  "discount": number,
+  "tip": 0,
+  "total": number
+}
+    </pre>
+
+    <h2>How It Works</h2>
+    <ol>
+      <li>The API receives a base64-encoded image of a restaurant receipt.</li>
+      <li>
+        It uses Google's Generative AI (Gemini 1.5 model) to analyze the image.
+      </li>
+      <li>
+        The AI extracts relevant information such as items, prices, taxes, and
+        total.
+      </li>
+      <li>
+        The data is structured into a JSON format and returned to the client.
+      </li>
+    </ol>
+
+    <h2>Error Handling</h2>
+    <p>
+      The API includes error handling for invalid inputs, parsing errors, and
+      unexpected AI responses. Appropriate error messages are returned in case
+      of issues.
+    </p>
+
+    <div class="footer">
+      <p>
+        For more information about data handling and privacy, please see our
+        <a href="/privacy-policy">Privacy Policy</a>.
+      </p>
+    </div>
   </body>
 </html>

@@ -15,6 +15,7 @@ function bufferToGenerativePart(buffer, mimeType) {
 }
 
 const AnalyzeImage = async (req, res) => {
+  console.log('start');
   try {
     // Input validation
     if (!req.body.image || typeof req.body.image !== 'string') {
@@ -27,34 +28,53 @@ const AnalyzeImage = async (req, res) => {
     // Process image with Google Gemini 1.5 model
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const prompt = `You are an AI for a bill-splitting app. Your task is to process image of a restaurant receipt and return it in a specific JSON format. Follow these instructions:
+    const prompt = `You are an AI for a bill-splitting app. Your task is to process an image of a restaurant receipt and return the information in a specific JSON format. Follow these instructions carefully:
 
-    // 1. Return only a JSON object with no additional text.
-    // 2. The JSON object should be formatted as follows:
+1. Return only a valid JSON object with no additional text.
+2. Format the JSON object as follows:
 
-    // {
-    //   "items": [
-    //     {
-    //       "id":"unique id key"
-    //       "name": "item name",
-    //       "quantity": "item quantity" - MUST BE A NUMBER WITH NO TEXT
-    //       "price": "item price per unit" - MUST BE A NUMBER WITH NO TEXT
-    //       "assignTo": [] - Empty array
-    //     }
-    //   ],
-    //   "taxes": "total taxes" - MUST BE A NUMBER WITH NO TEXT
-    //   "tip": "tip amount" - SET TO 0 - MUST BE A NUMBER WITH NO TEXT
-    //   "total": "total amount" - MUST BE A NUMBER WITH NO TEXT
-    // }
+{
+  "items": [
+    {
+      "id": "unique_id_string",
+      "name": "item name",
+      "quantity": number,
+      "price": number,
+      "assignTo": []
+    }
+  ],
+  "currency": "currency_symbol",
+  "taxes": number,
+  "discount": number,
+  "tip": 0,
+  "total": number
+}
 
-    // 3. Ensure the "quantity," "price," "taxes," and "total" fields contain only numbers with no text.
-    // 4. Compare the sum of the items' total prices (quantity * price per unit) plus taxes to the total amount extracted from the receipt.
-    // 5. Determine if the price for items with a quantity greater than 1 is for a single item or the total for all units of that item. Adjust the price to reflect the price per single item.
-    // 6. If the total amount is unclear from the extracted text, calculate it from the item prices and taxes.
-    // 7. Do not return any text other than the JSON object.
-    // 8. The JSON must be correctly formatted so the app can run JSON.parse on it.
+3. Ensure strict adherence to these rules:
+   - All numeric fields (quantity, price, taxes, discount, tip, total) must be numbers without quotation marks or text.
+   - The "id" field should be a unique string for each item.
+   - The "assignTo" array should always be empty.
+   - If no currency symbol is present, infer it from the language (default to "$" for English).
+   - Combine all taxes and fees into a single "taxes" value.
+   - Always set "tip" to 0.
 
-    // Remember, the response should include only the JSON object and no other text.`;
+4. Price calculation:
+   - Verify that item prices, taxes, and discounts match the total when calculated.
+   - For items with quantity > 1, ensure the "price" field reflects the per-unit price.
+
+5. If the total is unclear, calculate it from item prices, taxes, and discounts.
+
+6. Ensure the JSON is correctly formatted for parsing (use double quotes for strings, no trailing commas).
+
+7. Do not include any explanations or additional text outside the JSON object.
+
+8. If certain information is missing or unclear, use reasonable defaults or estimates based on the available data.
+
+9. If taxes and fees included in the item prices, don't include it and return 0
+
+10. Round all numeric values to two decimal places for consistency.
+
+Provide only the JSON object in your response, with no other text.`;
 
     const imageParts = [bufferToGenerativePart(imageBuffer, 'image/jpeg')];
 
@@ -64,6 +84,7 @@ const AnalyzeImage = async (req, res) => {
     // Parse response
     const text = response.text();
     const jsonObject = JSON.parse(text);
+    console.log(jsonObject);
 
     // Validate jsonObject structure
     if (

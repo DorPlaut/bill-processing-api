@@ -24,6 +24,11 @@ app.use(
 app.use(express.static('./public'));
 app.use('/api', router);
 
+// Add this new route
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile('privacy-policy.html', { root: './public' });
+});
+
 const start = async () => {
   try {
     await app.listen(port, () =>
