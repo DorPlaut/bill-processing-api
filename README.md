@@ -1,9 +1,13 @@
 # Bill Splitter API Documentation
 ## Overview
 This API provides image analysis for bill splitting purposes. It uses Google's Generative AI to process images of restaurant receipts and return structured data.
+The service is currently avilable online. [Click here to visit](https://bill-processing-api.onrender.com/)
 
 ## Endpoint
+Localy:
 `POST /api/analyze-image`
+Online on free Render hosting (might have initial delay)
+`POST https://bill-processing-api.onrender.com/api/analyze-image`
 
 ## Request Format
 Send a POST request with a JSON body containing a base64-encoded image:
