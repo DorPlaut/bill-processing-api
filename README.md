@@ -11,7 +11,7 @@ Localy:
 
 `POST /api/analyze-image`
 
-Online on free Render hosting (might have initial delay):
+Online on free Render hosting (might have initial delay due to server downtime):
 
 `POST https://bill-processing-api.onrender.com/api/analyze-image`
 
