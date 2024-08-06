@@ -3,8 +3,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 dotenv.config();
 
+// Initialize the Google Generative AI client
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-
+// Convert buffer to a format compatible with Google's Generative AI
 function bufferToGenerativePart(buffer, mimeType) {
   return {
     inlineData: {
@@ -17,12 +18,14 @@ function bufferToGenerativePart(buffer, mimeType) {
 const AnalyzeImage = async (req, res) => {
   console.log('start');
   try {
+    // Extract the image data from the request body
+    const { image } = req.body;
     // Input validation
-    if (!req.body.image || typeof req.body.image !== 'string') {
+    if (!image || typeof image !== 'string') {
       return res.status(400).json({ error: 'Invalid image data' });
     }
 
-    const { image } = req.body;
+    // Create buffer from base64 string
     const imageBuffer = Buffer.from(image, 'base64');
 
     // Process image with Google Gemini 1.5 model
